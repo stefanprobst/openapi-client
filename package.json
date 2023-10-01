@@ -1,0 +1,76 @@
+{
+	"name": "@stefanprobst/openapi-client",
+	"version": "0.0.0",
+	"license": "MIT",
+	"type": "module",
+	"main": "./dist/index.js",
+	"exports": {
+		".": "./dist/index.js"
+	},
+	"files": [
+		"dist"
+	],
+	"sideEffects": false,
+	"engines": {
+		"node": ">=18",
+		"pnpm": ">=8"
+	},
+	"packageManager": "pnpm@8.8.0",
+	"scripts": {
+		"build": "tsup ./src/index.ts",
+		"ci:release": "changeset publish",
+		"format:check": "prettier . --cache --check --ignore-path ./.gitignore",
+		"format:fix": "pnpm run format:check --write",
+		"lint:check": "eslint . --cache --ignore-path .gitignore",
+		"lint:fix": "pnpm run lint:check --fix",
+		"prepare": "run-s setup",
+		"prepublishOnly": "run-s validate build",
+		"setup": "is-ci || simple-git-hooks",
+		"test": "uvu -r tsm",
+		"types:check": "tsc --noEmit",
+		"validate": "run-p format:check lint:check types:check test"
+	},
+	"dependencies": {
+		"@acdh-oeaw/lib": "^0.1.6",
+		"openapi-typescript": "^6.7.0",
+		"openapi-typescript-helpers": "^0.0.3"
+	},
+	"devDependencies": {
+		"@acdh-oeaw/commitlint-config": "^1.0.0",
+		"@acdh-oeaw/eslint-config": "^1.0.0",
+		"@acdh-oeaw/prettier-config": "^1.0.0",
+		"@acdh-oeaw/tsconfig-lib": "^1.0.0",
+		"@changesets/changelog-github": "^0.4.8",
+		"@changesets/cli": "^2.26.1",
+		"@commitlint/cli": "^17.6.3",
+		"@types/node": "^18.18.0",
+		"eslint": "^8.41.0",
+		"lint-staged": "^13.2.2",
+		"npm-run-all2": "^6.0.6",
+		"prettier": "^2.8.8",
+		"simple-git-hooks": "^2.8.1",
+		"tsm": "^2.3.0",
+		"tsup": "^6.7.0",
+		"typescript": "^5.0.4",
+		"uvu": "^0.5.6"
+	},
+	"commitlint": {
+		"extends": "@acdh-oeaw/commitlint-config"
+	},
+	"eslintConfig": {
+		"extends": "@acdh-oeaw/eslint-config"
+	},
+	"lint-staged": {
+		"*.ts": [
+			"eslint --cache --fix",
+			"prettier --cache --write"
+		],
+		"*": "prettier --cache --ignore-unknown --write"
+	},
+	"prettier": "@acdh-oeaw/prettier-config",
+	"simple-git-hooks": {
+		"commit-msg": "pnpm exec commitlint --edit",
+		"pre-commit": "pnpm exec lint-staged",
+		"pre-push": "pnpm run validate"
+	}
+}
