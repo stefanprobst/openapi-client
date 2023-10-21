@@ -39,13 +39,19 @@ export type FetchOptions<T> = Omit<RequestConfig, "body"> & RequestOptions<T>;
 export type FetchResponse<T> = FilterKeys<SuccessResponse<ResponseObjectMap<T>>, MediaType>;
 
 export default function createClient<Paths extends {}>({ baseUrl }: ClientOptions) {
+	const _baseUrl = new URL(baseUrl);
+
+	if (!_baseUrl.pathname.endsWith("/")) {
+		_baseUrl.pathname = _baseUrl.pathname + "/";
+	}
+
 	function _request<P extends keyof Paths, M extends HttpMethod>(
 		pathname: P,
 		options: FetchOptions<M extends keyof Paths[P] ? Paths[P][M] : never>,
 	): Promise<FetchResponse<M extends keyof Paths[P] ? Paths[P][M] : unknown>> {
 		const { params = {}, ...init } = options;
 
-		const url = createRequestUrl(baseUrl, pathname as string, params);
+		const url = createRequestUrl(_baseUrl, pathname as string, params);
 
 		return request(url, init as any) as any;
 	}
@@ -142,11 +148,19 @@ export default function createClient<Paths extends {}>({ baseUrl }: ClientOption
 }
 
 function createRequestUrl(
-	baseUrl: URL | string,
+	baseUrl: URL,
 	pathname: string,
 	params: { path?: Record<string, any>; query?: Record<string, any> },
 ): URL {
 	const { path, query } = params;
+
+	/**
+	 * When a base url has a path, ensure that pathname is appended correctly.
+	 *
+	 * E.g. `new URL('/query/', 'https://example.com/api/')` would result in
+	 * `https://example.com/query/` not `https://example.com/api/query/`.
+	 */
+	const _pathname = pathname.startsWith("/") ? pathname.slice(1) : pathname;
 
 	const url = createUrl({
 		baseUrl,

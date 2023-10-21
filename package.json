@@ -1,6 +1,6 @@
 {
 	"name": "@stefanprobst/openapi-client",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"license": "MIT",
 	"type": "module",
 	"main": "./dist/index.js",
@@ -32,8 +32,10 @@
 	},
 	"dependencies": {
 		"@acdh-oeaw/lib": "^0.1.6",
-		"openapi-typescript": "^7.0.0-next.2",
 		"openapi-typescript-helpers": "^0.0.4"
+	},
+	"peerDependencies": {
+		"openapi-typescript": "^7.0.0-next.2"
 	},
 	"devDependencies": {
 		"@acdh-oeaw/commitlint-config": "^1.0.0",
@@ -47,6 +49,7 @@
 		"eslint": "^8.52.0",
 		"lint-staged": "^15.0.2",
 		"npm-run-all2": "^6.1.1",
+		"openapi-typescript": "^7.0.0-next.2",
 		"prettier": "^3.0.3",
 		"simple-git-hooks": "^2.8.1",
 		"tsm": "^2.3.0",
