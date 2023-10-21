@@ -7,6 +7,7 @@
 import { createUrl, createUrlSearchParams, request, type RequestConfig } from "@acdh-oeaw/lib";
 import type {
 	FilterKeys,
+	HasRequiredKeys,
 	HttpMethod,
 	MediaType,
 	OperationRequestBodyContent,
@@ -18,17 +19,24 @@ import type {
 interface ClientOptions {
 	baseUrl: URL | string;
 }
-type ParamsOption<T> = T extends { parameters: any }
-	? { params: NonNullable<T["parameters"]> }
-	: { params?: never };
-type RequestBodyOption<T> = OperationRequestBodyContent<T> extends never
+
+export type ParamsOption<T> = T extends { parameters: any }
+	? HasRequiredKeys<T["parameters"]> extends never
+		? { params?: T["parameters"] }
+		: { params: T["parameters"] }
+	: never;
+
+export type RequestBodyOption<T> = OperationRequestBodyContent<T> extends never
 	? { body?: never }
 	: undefined extends OperationRequestBodyContent<T>
 	? { body?: OperationRequestBodyContent<T> }
 	: { body: OperationRequestBodyContent<T> };
-type RequestOptions<T> = ParamsOption<T> & RequestBodyOption<T>;
-type FetchOptions<T> = Omit<RequestConfig, "body"> & RequestOptions<T>;
-type FetchResponse<T> = FilterKeys<SuccessResponse<ResponseObjectMap<T>>, MediaType>;
+
+export type RequestOptions<T> = ParamsOption<T> & RequestBodyOption<T>;
+
+export type FetchOptions<T> = Omit<RequestConfig, "body"> & RequestOptions<T>;
+
+export type FetchResponse<T> = FilterKeys<SuccessResponse<ResponseObjectMap<T>>, MediaType>;
 
 export default function createClient<Paths extends {}>({ baseUrl }: ClientOptions) {
 	function _request<P extends keyof Paths, M extends HttpMethod>(
@@ -42,54 +50,93 @@ export default function createClient<Paths extends {}>({ baseUrl }: ClientOption
 		return request(url, init as any) as any;
 	}
 
+	type DeletePaths = PathsWithMethod<Paths, "delete">;
+	type GetPaths = PathsWithMethod<Paths, "get">;
+	type HeadPaths = PathsWithMethod<Paths, "head">;
+	type OptionsPaths = PathsWithMethod<Paths, "options">;
+	type PatchPaths = PathsWithMethod<Paths, "patch">;
+	type PostPaths = PathsWithMethod<Paths, "post">;
+	type PutPaths = PathsWithMethod<Paths, "put">;
+	type TracePaths = PathsWithMethod<Paths, "trace">;
+	type DeleteFetchOptions<P extends DeletePaths> = FetchOptions<FilterKeys<Paths[P], "delete">>;
+	type GetFetchOptions<P extends GetPaths> = FetchOptions<FilterKeys<Paths[P], "get">>;
+	type HeadFetchOptions<P extends HeadPaths> = FetchOptions<FilterKeys<Paths[P], "head">>;
+	type OptionsFetchOptions<P extends OptionsPaths> = FetchOptions<FilterKeys<Paths[P], "options">>;
+	type PatchFetchOptions<P extends PatchPaths> = FetchOptions<FilterKeys<Paths[P], "patch">>;
+	type PostFetchOptions<P extends PostPaths> = FetchOptions<FilterKeys<Paths[P], "post">>;
+	type PutFetchOptions<P extends PutPaths> = FetchOptions<FilterKeys<Paths[P], "put">>;
+	type TraceFetchOptions<P extends TracePaths> = FetchOptions<FilterKeys<Paths[P], "trace">>;
+
 	return {
-		get<P extends PathsWithMethod<Paths, "get">>(
-			pathname: P,
-			options: FetchOptions<FilterKeys<Paths[P], "get">>,
+		DELETE<P extends DeletePaths>(
+			url: P,
+			...init: HasRequiredKeys<DeleteFetchOptions<P>> extends never
+				? [DeleteFetchOptions<P>?]
+				: [DeleteFetchOptions<P>]
 		) {
-			return _request<P, "get">(pathname, { ...options, method: "get" } as any);
+			return _request<P, "delete">(url, {
+				...init[0],
+				method: "DELETE",
+			} as any);
 		},
-		put<P extends PathsWithMethod<Paths, "put">>(
-			pathname: P,
-			options: FetchOptions<FilterKeys<Paths[P], "put">>,
+		GET<P extends GetPaths>(
+			url: P,
+			...init: HasRequiredKeys<GetFetchOptions<P>> extends never
+				? [GetFetchOptions<P>?]
+				: [GetFetchOptions<P>]
 		) {
-			return _request<P, "put">(pathname, { ...options, method: "put" } as any);
+			return _request<P, "get">(url, { ...init[0], method: "GET" } as any);
 		},
-		post<P extends PathsWithMethod<Paths, "post">>(
-			pathname: P,
-			options: FetchOptions<FilterKeys<Paths[P], "post">>,
+		HEAD<P extends HeadPaths>(
+			url: P,
+			...init: HasRequiredKeys<HeadFetchOptions<P>> extends never
+				? [HeadFetchOptions<P>?]
+				: [HeadFetchOptions<P>]
 		) {
-			return _request<P, "post">(pathname, { ...options, method: "post" } as any);
+			return _request<P, "head">(url, { ...init[0], method: "HEAD" } as any);
 		},
-		delete<P extends PathsWithMethod<Paths, "delete">>(
-			pathname: P,
-			options: FetchOptions<FilterKeys<Paths[P], "delete">>,
+		OPTIONS<P extends OptionsPaths>(
+			url: P,
+			...init: HasRequiredKeys<OptionsFetchOptions<P>> extends never
+				? [OptionsFetchOptions<P>?]
+				: [OptionsFetchOptions<P>]
 		) {
-			return _request<P, "delete">(pathname, { ...options, method: "delete" } as any);
+			return _request<P, "options">(url, {
+				...init[0],
+				method: "OPTIONS",
+			} as any);
 		},
-		options<P extends PathsWithMethod<Paths, "options">>(
-			pathname: P,
-			options: FetchOptions<FilterKeys<Paths[P], "options">>,
+		PATCH<P extends PatchPaths>(
+			url: P,
+			...init: HasRequiredKeys<PatchFetchOptions<P>> extends never
+				? [PatchFetchOptions<P>?]
+				: [PatchFetchOptions<P>]
 		) {
-			return _request<P, "options">(pathname, { ...options, method: "options" } as any);
+			return _request<P, "patch">(url, { ...init[0], method: "PATCH" } as any);
 		},
-		head<P extends PathsWithMethod<Paths, "head">>(
-			pathname: P,
-			options: FetchOptions<FilterKeys<Paths[P], "head">>,
+		POST<P extends PostPaths>(
+			url: P,
+			...init: HasRequiredKeys<PostFetchOptions<P>> extends never
+				? [PostFetchOptions<P>?]
+				: [PostFetchOptions<P>]
 		) {
-			return _request<P, "head">(pathname, { ...options, method: "head" } as any);
+			return _request<P, "post">(url, { ...init[0], method: "POST" } as any);
 		},
-		patch<P extends PathsWithMethod<Paths, "patch">>(
-			pathname: P,
-			options: FetchOptions<FilterKeys<Paths[P], "patch">>,
+		PUT<P extends PutPaths>(
+			url: P,
+			...init: HasRequiredKeys<PutFetchOptions<P>> extends never
+				? [PutFetchOptions<P>?]
+				: [PutFetchOptions<P>]
 		) {
-			return _request<P, "patch">(pathname, { ...options, method: "patch" } as any);
+			return _request<P, "put">(url, { ...init[0], method: "PUT" } as any);
 		},
-		trace<P extends PathsWithMethod<Paths, "trace">>(
-			pathname: P,
-			options: FetchOptions<FilterKeys<Paths[P], "trace">>,
+		TRACE<P extends TracePaths>(
+			url: P,
+			...init: HasRequiredKeys<TraceFetchOptions<P>> extends never
+				? [TraceFetchOptions<P>?]
+				: [TraceFetchOptions<P>]
 		) {
-			return _request<P, "trace">(pathname, { ...options, method: "trace" } as any);
+			return _request<P, "trace">(url, { ...init[0], method: "TRACE" } as any);
 		},
 	};
 }

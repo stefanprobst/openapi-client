@@ -1,6 +1,6 @@
 {
 	"name": "@stefanprobst/openapi-client",
-	"version": "0.0.0",
+	"version": "0.0.1",
 	"license": "MIT",
 	"type": "module",
 	"main": "./dist/index.js",
@@ -32,8 +32,8 @@
 	},
 	"dependencies": {
 		"@acdh-oeaw/lib": "^0.1.6",
-		"openapi-typescript": "^6.7.0",
-		"openapi-typescript-helpers": "^0.0.3"
+		"openapi-typescript": "^7.0.0-next.2",
+		"openapi-typescript-helpers": "^0.0.4"
 	},
 	"devDependencies": {
 		"@acdh-oeaw/commitlint-config": "^1.0.0",
@@ -42,15 +42,15 @@
 		"@acdh-oeaw/tsconfig-lib": "^1.0.0",
 		"@changesets/changelog-github": "^0.4.8",
 		"@changesets/cli": "^2.26.1",
-		"@commitlint/cli": "^17.6.3",
-		"@types/node": "^18.18.0",
-		"eslint": "^8.41.0",
-		"lint-staged": "^13.2.2",
-		"npm-run-all2": "^6.0.6",
-		"prettier": "^2.8.8",
+		"@commitlint/cli": "^18.0.0",
+		"@types/node": "^20.8.7",
+		"eslint": "^8.52.0",
+		"lint-staged": "^15.0.2",
+		"npm-run-all2": "^6.1.1",
+		"prettier": "^3.0.3",
 		"simple-git-hooks": "^2.8.1",
 		"tsm": "^2.3.0",
-		"tsup": "^6.7.0",
+		"tsup": "^7.2.0",
 		"typescript": "^5.0.4",
 		"uvu": "^0.5.6"
 	},

@@ -10,7 +10,7 @@ for generating types, and is mostly copied from
 ## how to install
 
 ```bash
-npm install @acdh-oeaw/openapi-client
+npm install @stefanprobst/openapi-client
 ```
 
 ## how to use
