@@ -165,8 +165,8 @@ function createRequestUrl(
 	const url = createUrl({
 		baseUrl,
 		pathname: path
-			? pathname.replace(/{(.+?)}/g, (_, key) => encodeURIComponent(path[key]))
-			: pathname,
+			? _pathname.replace(/{(.+?)}/g, (_, key) => encodeURIComponent(path[key]))
+			: _pathname,
 		searchParams: query ? createUrlSearchParams(query) : undefined,
 	});
 
